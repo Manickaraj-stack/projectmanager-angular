@@ -1,0 +1,173 @@
+<div class="row my-3 p-3 bg-white rounded box-shadow">
+    <div class="col-xs-12 col-sm-2 col-md-2"></div>
+    <div class="col-xs-12 col-sm-8 col-md-8">
+      <form #addprojectForm="ngForm" method="post" (ngSubmit)="addproject(project)" novalidate >
+        <div class="form-group row">
+          <label for="projectName" class="col-sm-2 col-form-label">Project</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="projectName" maxlength="50" required name="projectName" 
+                #projectName="ngModel" [(ngModel)]="project.ProjectName" placeholder="Enter the Project Name">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <input id="setdate" type="checkbox" name="setdate" #setdate="ngModel" [(ngModel)]="project.IsSetdate"/>
+                <label for="setdate" class="pl-0">Set Start and End Date </label>                
+                <div class="form-group col-xs-12 col-sm-4 col-md-4" style="display: inline-table;">
+                    <label for="startDate">Start Date</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="dd/mm/yyyy" id="startDate" [readonly]="true"
+                            name="startDate" [(ngModel)]="project.StartDate" ngbDatepicker #startDate="ngbDatepicker" 
+                            (dateSelect)="onDateSelectPicker($event,'start')"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary fa fa-calendar" (click)="startDate.toggle()" 
+                            type="button"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-xs-12 col-sm-4 col-md-4" style="display: inline-table;">
+                    <label for="endDate">End Date</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="dd/mm/yyyy" id="endDate" [readonly]="true"
+                            name="endDate" [(ngModel)]="project.EndDate" ngbDatepicker #endDate="ngbDatepicker" (dateSelect)="onDateSelectPicker($event,'end')"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary fa fa-calendar" (click)="endDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+        <div class="form-group row">
+            <label for="priority" class="col-sm-2 col-form-label">Priority</label>
+            <div class="col-sm-9">
+                <div class="pt-2">
+                        <input type="range" min="1" max="30" name="priority" #priority="ngModel" [(ngModel)]="project.ProjectPriority" 
+                        class="slider" id="priority">
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div class="pt-2">
+                    {{project.priority}}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="projectmanager" class="col-sm-2 col-form-label">Manager</label>
+            <div class="col-sm-10" style="display: inline-flex;">
+                <input id="projectmanager" type="text" class="form-control" style="display: inline-block;" name="projectmanagerId" 
+                [ngModel]="project.FirstName"
+                placeholder="Select a Manager" disabled/>
+                <button type="button" class="btn btn-success ml-2" data-toggle="modal" 
+                (click)=openmodal() data-target="#searchmodal">Select</button>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10" style="text-align: right;">
+                <button type="submit" class="btn btn-success mr-1">Add</button>
+                <button type="button" class="btn btn-success" (click)=reset()>Reset</button>
+            </div>
+        </div>
+  
+        <!--<div class="border-bottom border-dark"></div>-->
+  
+        <div class="modal fade" role="dialog" id="searchmodal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title">{{modalHeading}}</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">                  
+                  <ul>
+                    <li *ngFor="let user of users">
+                        <span (click)="getselectedvalue($event, user)" data-dismiss="modal" id="userselected" class="badge">{{user.FirstName}}</span>
+                    </li>
+                  </ul>                
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">                  
+                  <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="submitModalOpener" class="btn btn-primary" [hidden]="true" data-toggle="modal" data-target="#submitModal"></button>
+
+          <!-- The Modal -->
+            <div class="modal fade" role="dialog" id="submitModal">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                    <h4 class="modal-title">{{modalHeading}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                    {{modalBody}}
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">                    
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+      </form>
+    </div>
+</div>
+
+<div class="row my-3 p-3 bg-white rounded box-shadow">
+    <div class="col-xs-12 col-sm-2 col-md-2"></div>
+    <div class="col-xs-12 col-sm-8 col-md-8">
+        <form #viewprojectForm="ngForm" method="get" novalidate >
+            <div class="form-group row">
+                <input type="text" class="form-control" id="projectName" maxlength="50" name="projectName" 
+                    #projectName="ngModel" [(ngModel)]="project.ProjectName" placeholder="Search...">
+            </div>
+
+            <div class="form-group row">
+                <label for="sortby" class="col-sm-2 col-form-label">Sort by:</label>
+                <button type="submit" class="btn mx-3" >Start date</button>
+                <button type="submit" class="btn mx-3" >End date</button>
+                <button type="submit" class="btn mx-3" >Priority</button>
+                <button type="submit" class="btn mx-3" >Completed</button>
+            </div>
+
+            <div>
+                <div *ngFor="let item of allprojects" class="row mb-4">
+                    <div class="col-sm-8">
+                        <div class="row customBg mr-1">
+                            <div class="col-sm-12">
+                                <label for="Project" class="col-sm-2 col-form-label">Project:{{item.ProjectName}}</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="No of tasks" class="col-sm-12 col-form-label">No of tasks:</label>
+                                <label for="Start date" class="col-sm-12 col-form-label">Start date:{{item.StartDate}}</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="Completed" class="col-sm-12 col-form-label">Completed:</label>
+                                <label for="End date" class="col-sm-12 col-form-label">End date:{{item.EndDate}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="row customBg">
+                            <label for="Priority" class="col-sm-12 col-form-label">Priority:{{item.ProjectPriority}}</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="submit" (click)=updateProject(item) class="btn mb-4" >Update</button>
+                        <button type="submit" class="btn mb-2" >Suspend</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
