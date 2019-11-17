@@ -1,3 +1,4 @@
+import { User } from './../userlist/user';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { appService } from '../service/index';
@@ -41,6 +42,7 @@ export class AddprojectComponent implements OnInit, OnDestroy {
       };
       this.fromDate = calendar.getToday();
       this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
+      jQuery("#btnsubmit").html("Add");
     }
 
     this.appService.getProjects().subscribe(
@@ -66,26 +68,72 @@ export class AddprojectComponent implements OnInit, OnDestroy {
           (data: any) => {
              this.addModalHeading = 'Yeah :-)';
              this.addModalBody = 'Project Added Successfully';
-             //document.getElementById("submitModalOpener").click();
+             document.getElementById("submitModalOpener").click();
           },
           (err: any) => {
               this.addModalHeading = 'Oh No !!!';
               this.addModalBody = 'Unexpected error occured during Add Project. Please try after some time.';
-              //document.getElementById("submitModalOpener").click();        
+              document.getElementById("submitModalOpener").click();        
+            }
+          );
+    }
+    else{
+      var updateProject = {};
+        //if(this.project.parentTaskId === '' || this.project.parentTaskId === null || this.project.parentTaskId === undefined){
+          updateProject = {
+            "ProjectName": this.project.ProjectName,
+            "IsSetdate": this.project.IsSetdate,
+            "StartDate": this.convertDateJsonToString(this.fromDate),
+            "EndDate": this.convertDateJsonToString(this.toDate),
+            "ProjectPriority": this.project.ProjectPriority,
+            "ID": this.project.ID,
+            "ProjectId": this.project.ProjectId
+          };
+
+          this.appService.editProject(updateProject, this.project.ProjectId).subscribe(
+          (data: any) => {
+            this.project = {
+              ProjectName:'',
+              IsSetdate:'',
+              StartDate: new Date(),
+              EndDate: new Date(),
+              ProjectPriority: '10',
+              //ID: ''
+            };
+            this.fromDate = this.calendarToday.getToday();
+            this.toDate = this.calendarToday.getNext(this.calendarToday.getToday(), 'd', 10);
+            jQuery("#btnsubmit").html("Add");
+            jQuery("#projectmanager").val('');
+            this.addModalHeading = 'Yeah :-)';
+            this.addModalBody = 'Project updated Successfully';
+            document.getElementById("submitModalOpener").click();
+          },
+          (err: any) => {
+              this.addModalHeading = 'Oh No !!!';
+              this.addModalBody = 'Unexpected error occured during Add Project. Please try after some time.';
+              document.getElementById("submitModalOpener").click();        
             }
           );
     }
   }
 
   updateProject(project: any){
+    this.flow = 'updateproject';
     this.project = {
         ProjectName: project.ProjectName,
         IsSetdate:project.IsSetdate,
         StartDate: project.StartDate,
         EndDate: project.EndDate,
         ProjectPriority: project.ProjectPriority,
-        //ID: ''
-      };      
+        ID: project.User.ID,
+        ProjectId: project.ProjectId
+      };
+      const obj = { year: 2019, month: 10, day: 15 };
+
+      jQuery("#projectmanager").val(project.User.FirstName);
+      jQuery("#startDate").val(project.StartDate);
+      jQuery("#endDate").val(project.EndDate);
+      jQuery("#btnsubmit").html("Update");
   }
 
   ngOnInit() {    

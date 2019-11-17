@@ -1,3 +1,4 @@
+import { User } from './../userlist/user';
 import { Component, OnInit, Inject, ViewEncapsulation, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
@@ -64,11 +65,31 @@ export class ViewTaskComponent implements OnInit, OnDestroy {
   getParentTaskName(item: any){
     var parentTaskName = '';
     if(item !== null && item !== undefined){
-      if(item.parentTask !== null && item.parentTask !== undefined){
-        parentTaskName = item.parentTask.parentTaskName;
+      if(item.ParentTask !== null && item.ParentTask !== undefined){
+        parentTaskName = item.ParentTask.ParentTask1;
       }
     }
     return parentTaskName;
+  }
+
+  getProjectName(project: any){
+    var projectName = '';
+    if(project !== null && project !== undefined){
+      if(project.Project !== null && project.Project !== undefined){
+        projectName = project.Project.ProjectName;
+      }
+    }
+    return projectName;
+  }
+
+  getUserName(user: any){
+    var userName = '';
+    if(user !== null && user !== undefined){
+      if(user.User !== null && user.User !== undefined){
+        userName = user.User.FirstName;
+      }
+    }
+    return userName;
   }
 
   resetButton(){

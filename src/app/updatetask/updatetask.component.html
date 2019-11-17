@@ -5,15 +5,16 @@
                 <div class="form-group row">
                     <label for="taskName" class="col-sm-2 col-form-label">Project</label>
                     <div class="col-sm-10" style="display: inline-flex;">
-                        <input type="text" class="form-control" [disabled]="(task.IsParentTask)" style="display: inline-block;" id="project" maxlength="50" required name="taskName" #projectName="ngModel" [(ngModel)]="task.projectName" placeholder="Select a project">
+                        <input type="text" class="form-control" [disabled]="(task.IsParentTask)" style="display: inline-block;" id="project" maxlength="50" required 
+                        name="projectId" #projectName="ngModel" [(ngModel)]="task.ProjectName" placeholder="Select a project">
                         <button type="button" [disabled]="(task.IsParentTask)" class="btn btn-success ml-2" data-toggle="modal" 
-                                (click)=selectproject() data-target="#searchmodal">Select</button>
+                                (click)=selectproject() data-target="#projectmodal">Select</button>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="taskName" class="col-sm-2 col-form-label">Task Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="taskName" maxlength="50" required name="taskName" #taskName="ngModel" [(ngModel)]="task.taskName" placeholder="Enter the Task Name">
+                        <input type="text" class="form-control" id="taskName" maxlength="50" required name="taskName" #taskName="ngModel" [(ngModel)]="task.TaskName" placeholder="Enter the Task Name">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -27,23 +28,23 @@
                     <label for="priority" class="col-sm-2 col-form-label">Priority</label>
                     <div class="col-sm-9">
                         <div class="pt-2">
-                                <input type="range" [disabled]="(task.IsParentTask)" min="1" max="30" name="priority" #priority="ngModel" [(ngModel)]="task.priority" class="slider" id="priority">
+                                <input type="range" [disabled]="(task.IsParentTask)" min="1" max="30" name="priority" #priority="ngModel" [(ngModel)]="task.TaskPriority" class="slider" id="priority">
                         </div>
                     </div>
                     <div class="col-sm-1">
                         <div class="pt-2">
-                            {{task.priority}}
+                            {{task.TaskPriority}}
                         </div>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="parentTask" class="col-sm-2 col-form-label">Parent Task</label>
                     <div class="col-sm-10" style="display: inline-flex;">
-                        <input id="parentTask" type="text" [disabled]="(task.IsParentTask)" class="form-control" name="parentTaskId" [ngbTypeahead]="parentTaskSearch" [ngModel]="task.parentTaskName"
-                        (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)" [resultFormatter]="formatter" 
-                         (selectItem)="selectedParentTaskItem($event)" (keydown)=clearParentId($event) #instance="ngbTypeahead" placeholder="Select a Parent Task"/>
-                         <button type="button" class="btn btn-success ml-2" [disabled]="(task.IsParentTask)" data-toggle="modal" 
-                                (click)=selectparenttask() data-target="#searchmodal">Select</button>
+                            <input type="text" class="form-control" [disabled]="(task.IsParentTask)" style="display: inline-block;" 
+                             id="parenttask" maxlength="50" required name="ParentId" #parenttask="ngModel" 
+                             [(ngModel)]="task.parenttaskName" placeholder="Select a parent task">
+                            <button type="button" id="btnparenttask" [disabled]="(task.IsParentTask)" class="btn btn-success ml-2" data-toggle="modal" 
+                                    (click)=selectparenttask() data-target="#parenttaskmodal">Select</button>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -69,9 +70,9 @@
                 <div class="form-group row">
                         <label for="taskName" class="col-sm-2 col-form-label">User</label>
                         <div class="col-sm-10" style="display: inline-flex;">
-                            <input type="text" class="form-control" [disabled]="(task.IsParentTask)" id="project" maxlength="50" required name="user" #projectName="ngModel" [(ngModel)]="task.user" placeholder="Select a user">
+                            <input type="text" class="form-control" [disabled]="(task.IsParentTask)" id="user" maxlength="50" required name="user" #userName="ngModel" [(ngModel)]="task.user" placeholder="Select a user">
                             <button type="button" class="btn btn-success ml-2" data-toggle="modal" 
-                                (click)=selectuser() [disabled]="(task.IsParentTask)" data-target="#searchmodal">Select</button>
+                                (click)=selectuser() [disabled]="(task.IsParentTask)" data-target="#usermodal">Select</button>
                         </div>
                     </div>
                 <div class="form-group row">
@@ -122,6 +123,79 @@
       </div>
     </div>
   </div>
+
+  <!-- The Modal -->
+<div class="modal fade" role="dialog" id="projectmodal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Projects list</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <ul>
+                    <li *ngFor="let project of projects">
+                        <span (click)="getselectedproject($event, project)" data-dismiss="modal" id="projectselected" class="badge">{{project.ProjectName}}</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" role="dialog" id="parenttaskmodal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title">Parent Tasks</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <ul>
+                        <li *ngFor="let parent of parenttasks">
+                            <span (click)="getselectedparent($event, parent)" data-dismiss="modal" id="parentselected" class="badge">{{parent.ParentTask1}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+    <div class="modal fade" role="dialog" id="usermodal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Users List</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <ul>
+                    <li *ngFor="let user of users">
+                        <span (click)="getselecteduser($event, user)" data-dismiss="modal" id="userselected" class="badge">{{user.FirstName}}</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
 
 <div [hidden]="!screenLoader" class="text-align-center"> 
 	<div class="modal-backdropP"></div>

@@ -23,7 +23,7 @@ export class appService {
     getTasks(): Observable<string[]> {
         //let headers = new Headers({ 'Accept': '*/*', 'Content-Type':'application/json'});
         //let options = new RequestOptions({ headers: headers });
-        return this.http.get(Config.API+ "/api/tasks", this.options)
+        return this.http.get(Config.API+ "/api/Tasks", this.options)
                         .map((res: Response) => res.json())
                         .catch(this.handleErrorNoChange.bind(this));
     }
@@ -31,7 +31,15 @@ export class appService {
     addTask(inputParam : {}): Observable<string[]> {
         //let headers = new Headers({ 'Accept': '*/*', 'Content-Type':'application/json' });
         //let options = new RequestOptions({ headers: headers });
-        return this.http.post(Config.API+ "api/tasks", inputParam, this.options)
+        return this.http.post(Config.API+ "/api/Tasks", inputParam, this.options)
+                        .map((res: Response) => res.json())
+                        .catch(this.handleErrorNoChange.bind(this));
+    }
+
+    addParentTask(inputParam : {}): Observable<string[]> {
+        //let headers = new Headers({ 'Accept': '*/*', 'Content-Type':'application/json' });
+        //let options = new RequestOptions({ headers: headers });
+        return this.http.post(Config.API+ "/api/ParentTasks", inputParam, this.options)
                         .map((res: Response) => res.json())
                         .catch(this.handleErrorNoChange.bind(this));
     }
@@ -75,12 +83,26 @@ export class appService {
                         .catch(this.handleErrorNoChange.bind(this));
     }
 
+    editProject(inputParam : {}, projectId : string): Observable<string[]> {
+        //let headers = new Headers({ 'Accept': '*/*', 'Content-Type':'application/json' });
+        //let options = new RequestOptions({ headers: headers });
+        return this.http.put(Config.API+ "/api/Projects/" + projectId, inputParam, this.options)
+                        .map((res: Response) => res.json())
+                        .catch(this.handleErrorNoChange.bind(this));
+    }
+
     getProjects(): Observable<string[]> {
         //let headers = new Headers({ 'Accept': '*/*', 'Content-Type':'application/json'});
         //let options = new RequestOptions({ headers: headers });
         return this.http.get(Config.API+ "/api/Projects", this.options)
                         .map((res: Response) => res.json())
                         .catch(this.handleErrorNoChange.bind(this));
+    }
+
+    getParenttasks(): Observable<any> {
+        return this.http.get(Config.API+ "/api/ParentTasks", this.options)
+        .map((res: Response) => res.json())
+        .catch(this.handleErrorNoChange.bind(this));
     }
 
     getUsers(): Observable<any> {

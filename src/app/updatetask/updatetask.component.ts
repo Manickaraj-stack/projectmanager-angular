@@ -18,7 +18,7 @@ declare var jQuery: any;
 })
 export class UpdateTaskComponent implements OnInit, OnDestroy {
 
-  @ViewChild('instance') instance: NgbTypeahead;
+  //@ViewChild('instance') instance: NgbTypeahead;
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
   task: any = {};
@@ -34,6 +34,9 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
   modalBody = '';
   flow = 'addtask';
   selectedParentTaskObj: any = {};
+  projects: any = [];
+  parenttasks: any = [];
+  users: any = [];
 
   constructor(calendar: NgbCalendar, config: NgbDatepickerConfig, public router: Router, private appService : appService) {
     this.calendarToday = calendar;
@@ -42,12 +45,14 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
     }
     if (this.flow === 'addtask') {
       this.task = {
-        taskName: '',
-        priority: '15',
-        parentTaskId: '',
-        parentTaskName: '',
-        startDate: new Date(),
-        endDate: new Date()
+        TaskName: '',
+        TaskPriority: '15',
+        StartDate: new Date(),
+        EndDate: new Date(),
+        IsParentTask:'',
+        ParentId: '',
+        UserId: '',
+        ProjectId:''
       };
       this.fromDate = calendar.getToday();
       this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
@@ -57,12 +62,16 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
       var edittask = this.appService.updatetask;
       this.selectedParentTaskObj = edittask.parentTask !== null ? edittask.parentTask : null;
       this.task = {
-        "taskName":edittask.taskName,
-        "priority":edittask.priority,
-        "parentTaskId":edittask.parentTask !== null ? edittask.parentTask.parentId : '',
-        "parentTaskName":edittask.parentTask !== null ? edittask.parentTask.parentTaskName : '',
-        "startDate":new Date(),
-        "endDate":new Date()
+        "TaskName":edittask.TaskName,
+        "TaskPriority":edittask.TaskPriority,
+        //"parentTaskId":edittask.parentTask !== null ? edittask.parentTask.parentId : '',
+        //"parentTaskName":edittask.parentTask !== null ? edittask.parentTask.parentTaskName : '',
+        "StartDate":new Date(),
+        "EndDate":new Date(),
+        "IsParentTask": edittask.IsParentTask,
+        "ProjectId": '',
+        "ParentId": '',
+        "UserId": ''
       };
       this.fromDate = NgbDate.from(this.constructDateFromService(edittask.startDate));
       this.toDate = NgbDate.from(this.constructDateFromService(edittask.endDate));
@@ -73,12 +82,12 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
     config.maxDate = {year: 2099, month: 12, day: 31};
     config.outsideDays = 'hidden';
 
-    this.screenLoader = false;
-    appService.getTasks().subscribe((data :any) => {
-      this.alltaskList = data;
-      console.log(this.alltaskList);
-      this.screenLoader = false;
-    });
+    // this.screenLoader = false;
+    // appService.getTasks().subscribe((data :any) => {
+    //   this.alltaskList = data;
+    //   console.log(this.alltaskList);
+    //   this.screenLoader = false;
+    // });
   }
 
   IsparentTask(task: any){
@@ -90,6 +99,9 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
         EndDate: new Date(),
         UserId:''
       };
+      jQuery("#project").val('');
+      jQuery("#parenttask").val('');
+      jQuery("#user").val('');
   }
 
   ngOnInit() {
@@ -100,7 +112,7 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
     this.task = {};
   }
 
-  formatter = (value: any) => value.parentTask.parentTaskName || '';
+  //formatter = (value: any) => value.parentTask.parentTaskName || '';
 
   updateTask(task: any){
     var parentTaskNameVal = jQuery("#parentTask").val();
@@ -112,25 +124,20 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
     }else{
       if(this.flow === 'addtask'){
         var submitAddTask = {};
-        if(this.task.parentTaskId === '' || this.task.parentTaskId === null || this.task.parentTaskId === undefined){
+        var submitParentTask = {};
+        if(!this.task.IsParentTask){
           submitAddTask = {
-            "taskName": this.task.taskName,
-            "startDate": this.convertDateJsonToString(this.fromDate),
-            "endDate": this.convertDateJsonToString(this.toDate),
-            "priority": this.task.priority,
-            "status": "A"
+            "ProjectId": this.task.ProjectId,
+            "ParentId": this.task.ParentId,
+            "IsParentTask": this.task.IsParentTask,
+            "TaskName":this.task.TaskName,
+            "StartDate": this.convertDateJsonToString(this.fromDate),
+            "EndDate": this.convertDateJsonToString(this.toDate),
+            "UserId": this.task.UserId,
+            "TaskPriority": this.task.TaskPriority,
           };
-        }else{
-          submitAddTask = {
-            "taskName": this.task.taskName,
-            "startDate": this.convertDateJsonToString(this.fromDate),
-            "endDate": this.convertDateJsonToString(this.toDate),
-            "priority": this.task.priority,
-            "parentId": this.task.parentTaskId === '' ? null: this.task.parentTaskId
-          };
-        }
-        
-        this.screenLoader = true;
+
+          this.screenLoader = true;
         this.appService.addTask(submitAddTask).subscribe(
           (data: any) => {
             this.screenLoader = false;
@@ -145,6 +152,24 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
               document.getElementById("submitModalOpener").click();        
             }
           );
+        }else{
+          submitParentTask = {
+            "ParentTask1": this.task.TaskName
+          };
+
+          this.appService.addParentTask(submitParentTask).subscribe(
+            (data: any) => {
+              this.modalHeading = 'Yeah :-)';
+              this.modalBody = 'Parent task Added Successfully';
+              document.getElementById("submitModalOpener").click();
+            },
+            (err: any) => {
+                this.modalHeading = 'Oh No !!!';
+                this.modalBody = 'Unexpected error occured during Add Task. Please try after some time.';
+                document.getElementById("submitModalOpener").click();        
+              }
+            );
+        }
       }
       if(this.flow === 'updatetask'){
         var submitUpdateTask = {
@@ -174,31 +199,46 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
     }
   }
 
-  parentTaskSearch = (text$: Observable<string>) => {
-    var parentTasks =[];
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-    const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
-    const inputFocus$ = this.focus$;
-    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term => (term === '' ? this.alltaskList : 
-      this.alltaskList.filter(v => v.parentTask.parentTaskName.toLowerCase().indexOf(term.toLowerCase()) > -1))
-      .slice(0, 10))
-    );
+  selectproject(){
+    this.appService.getProjects().subscribe(
+      (data: any) => {
+        this.projects = data;
+      });
   }
 
-  selectedParentTaskItem(event: NgbTypeaheadSelectItemEvent): void {
-    event.preventDefault();
-    this.selectedParentTaskObj = event.item.parentTask;
-    jQuery("#parentTask").val(event.item.parentTask.parentTaskName);
-    this.task.parentTaskId = event.item.parentTask.parentId;
-  }
+  getselectedproject(event, project: any){
+    var value = event.target.textContent;
+    jQuery("#project").val(value);
+    this.task.ProjectId = project.ProjectId;
+    this.task.ProjectName = value;
+}
 
-  clearParentId(event){
-    if (event.key !== "Enter") {
-      this.task.parentTaskId = "";
-      this.selectedParentTaskObj = null;
-    }
-  }
+selectparenttask(){
+  this.appService.getParenttasks().subscribe(
+    (data: any) => {
+      this.parenttasks = data;
+    });
+}
+
+getselectedparent(event, parent: any){
+  var value = event.target.textContent;
+  jQuery("#parenttask").val(value);
+  this.task.ParentId = parent.ParentId;
+}
+
+getselecteduser(event, user: any){
+  var value = event.target.textContent;
+  jQuery("#user").val(value);
+  this.task.UserId = user.ID;
+}
+
+selectuser(){
+this.modalHeading = "Users list";
+this.appService.getUsers().subscribe(
+  (data: any) => {
+    this.users = data;
+  });    
+};
 
   constructDateFromService(datestring: string){
     var res = datestring.split("/");
@@ -217,7 +257,9 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
     };
     this.fromDate = this.calendarToday.getToday();
     this.toDate = this.calendarToday.getNext(this.calendarToday.getToday(), 'd', 10);
-    jQuery("#parentTask").val("");
+    jQuery("#project").val('');
+    jQuery("#parenttask").val('');
+    jQuery("#user").val('');
   }
   
   viewTaskScreen(){
@@ -253,13 +295,6 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
       return json.day + '/' + json.month + '/' + json.year;
     }
   }
-
-  getParentTasks(tasks: any){
-    for (let item of tasks){
-      return item.parenttask.parenttaskname;
-   }
-  }
-
 }
 
 
