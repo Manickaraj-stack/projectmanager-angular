@@ -68,9 +68,9 @@
                     <tbody>
                         <tr *ngFor="let item of alltaskList | taskSearchPipe : task">
                             <td>{{item.TaskName}}</td>
-                            <td>{{getParentTaskName(item)}}</td>
-                            <td>{{getProjectName(item)}}</td>
-                            <td>{{getUserName(item)}}</td>
+                            <td>{{item.ParentTaskName}}</td>
+                            <td>{{item.ProjectName}}</td>
+                            <td>{{item.UserName}}</td>
                             <td>{{item.TaskPriority}}</td>
                             <td>{{item.StartDate}}</td>
                             <td>{{item.EndDate}}</td>
