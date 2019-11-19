@@ -4,6 +4,7 @@ import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { appService } from '../service/index';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 declare var jQuery: any;
 
 @Component({
@@ -69,6 +70,15 @@ export class AddprojectComponent implements OnInit, OnDestroy {
              this.addModalHeading = 'Yeah :-)';
              this.addModalBody = 'Project Added Successfully';
              document.getElementById("submitModalOpener").click();
+             this.project = {
+              ProjectName:'',
+              IsSetdate:'',
+              StartDate: new Date(),
+              EndDate: new Date(),
+              ProjectPriority: '10',
+              FirstName : ''
+              //ID: ''
+            };
           },
           (err: any) => {
               this.addModalHeading = 'Oh No !!!';
@@ -122,17 +132,16 @@ export class AddprojectComponent implements OnInit, OnDestroy {
     this.project = {
         ProjectName: project.ProjectName,
         IsSetdate:project.IsSetdate,
-        StartDate: project.StartDate,
-        EndDate: project.EndDate,
+        StartDate: NgbDate.from(this.constructDateFromService(project.StartDate)),
+        EndDate: NgbDate.from(this.constructDateFromService(project.EndDate)),
         ProjectPriority: project.ProjectPriority,
         ID: project.User.ID,
         ProjectId: project.ProjectId
       };
-      const obj = { year: 2019, month: 10, day: 15 };
 
       jQuery("#projectmanager").val(project.User.FirstName);
-      jQuery("#startDate").val(project.StartDate);
-      jQuery("#endDate").val(project.EndDate);
+      //jQuery("#startDate").val(NgbDate.from(this.constructDateFromService(project.StartDate)));
+      //jQuery("#endDate").val(NgbDate.from(this.constructDateFromService(project.EndDate)));
       jQuery("#btnsubmit").html("Update");
   }
 
@@ -177,6 +186,12 @@ export class AddprojectComponent implements OnInit, OnDestroy {
     }
   }
 
+  constructDateFromService(datestring: string){
+    var res = datestring.split("/");
+    const date: NgbDateStruct = { day: parseInt(res[0]), month: parseInt(res[1]), year: parseInt(res[2]) };
+    return date;
+  }
+
   reset(){
     this.project = {
       "ProjectName":"",
@@ -189,5 +204,6 @@ export class AddprojectComponent implements OnInit, OnDestroy {
     jQuery("#startDate").val("");
     jQuery("#endDate").val("");
     jQuery("#projectmanager").val("");
+    jQuery("#btnsubmit").html("Add");
 }
 }
