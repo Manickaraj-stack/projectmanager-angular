@@ -49,7 +49,7 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
         TaskPriority: '15',
         StartDate: new Date(),
         EndDate: new Date(),
-        IsParentTask:'',
+        IsParentTask:false,
         ParentId: '',
         UserId: '',
         ProjectId:''
@@ -64,30 +64,24 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
       this.task = {
         "TaskName":edittask.TaskName,
         "TaskPriority":edittask.TaskPriority,
-        //"parentTaskId":edittask.parentTask !== null ? edittask.parentTask.parentId : '',
-        //"parentTaskName":edittask.parentTask !== null ? edittask.parentTask.parentTaskName : '',
+        "ParentId":edittask.ParentId,
+        "ProjectId": edittask.ProjectId,
+        "UserId": edittask.UserId,
+        "ParentTaskName":edittask.ParentTaskName,
+        "ProjectName":edittask.ProjectName,
+        "UserName":edittask.UserName,
         "StartDate":new Date(),
         "EndDate":new Date(),
-        "IsParentTask": edittask.IsParentTask,
-        "ProjectId": '',
-        "ParentId": '',
-        "UserId": ''
+        "IsParentTask": edittask.IsParentTask        
       };
-      this.fromDate = NgbDate.from(this.constructDateFromService(edittask.startDate));
-      this.toDate = NgbDate.from(this.constructDateFromService(edittask.endDate));
+      this.fromDate = NgbDate.from(this.constructDateFromService(edittask.StartDate));
+      this.toDate = NgbDate.from(this.constructDateFromService(edittask.EndDate));
     }
 
     const currentDate = new Date();
     config.minDate = {year:currentDate.getFullYear(), month:currentDate.getMonth()+1, day: currentDate.getDate()};
     config.maxDate = {year: 2099, month: 12, day: 31};
     config.outsideDays = 'hidden';
-
-    // this.screenLoader = false;
-    // appService.getTasks().subscribe((data :any) => {
-    //   this.alltaskList = data;
-    //   console.log(this.alltaskList);
-    //   this.screenLoader = false;
-    // });
   }
 
   IsparentTask(task: any){
@@ -173,15 +167,18 @@ export class UpdateTaskComponent implements OnInit, OnDestroy {
       }
       if(this.flow === 'updatetask'){
         var submitUpdateTask = {
-          "id": this.appService.updatetask.id,
-          "taskName": this.task.taskName,
-          "startDate": this.convertDateJsonToString(this.fromDate),
-          "endDate": this.convertDateJsonToString(this.toDate),
-          "priority": this.task.priority,
-          "parentId": this.selectedParentTaskObj.parentId
+          "ProjectId": this.task.ProjectId,
+          "ParentId": this.task.ParentId,
+          "IsParentTask": this.task.IsParentTask,
+          "TaskName":this.task.TaskName,
+          "StartDate": this.convertDateJsonToString(this.fromDate),
+          "EndDate": this.convertDateJsonToString(this.toDate),
+          "UserId": this.task.UserId,
+          "TaskPriority": this.task.TaskPriority,
+          "TaskId": this.appService.updatetask.TaskId
         };
         this.screenLoader = true;
-        this.appService.editTask(submitUpdateTask, this.appService.updatetask.id).subscribe(
+        this.appService.editTask(submitUpdateTask, this.appService.updatetask.TaskId).subscribe(
           (data: any) => {
             this.screenLoader = false;
             this.modalHeading = 'Yeah :-)';
