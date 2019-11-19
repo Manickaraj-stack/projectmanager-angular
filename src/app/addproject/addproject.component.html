@@ -128,11 +128,6 @@
     <div class="col-xs-12 col-sm-8 col-md-8">
         <form #viewprojectForm="ngForm" method="get" novalidate >
             <div class="form-group row">
-                <input type="text" class="form-control" id="projectName" maxlength="50" name="projectName" 
-                    #projectName="ngModel" [(ngModel)]="project.ProjectName" placeholder="Search...">
-            </div>
-
-            <div class="form-group row">
                 <label for="sortby" class="col-sm-2 col-form-label">Sort by:</label>
                 <button type="submit" class="btn mx-3" >Start date</button>
                 <button type="submit" class="btn mx-3" >End date</button>
