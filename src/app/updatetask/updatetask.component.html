@@ -5,7 +5,7 @@
                 <div class="form-group row">
                     <label for="taskName" class="col-sm-2 col-form-label">Project</label>
                     <div class="col-sm-10" style="display: inline-flex;">
-                        <input type="text" class="form-control" [disabled]="(task.IsParentTask)" style="display: inline-block;" id="project" maxlength="50" required 
+                        <input type="text" class="form-control" [disabled]=true style="display: inline-block;" id="project" maxlength="50" required 
                         name="projectId" #projectName="ngModel" [(ngModel)]="task.ProjectName" placeholder="Select a project">
                         <button type="button" [disabled]="(task.IsParentTask)" class="btn btn-success ml-2" data-toggle="modal" 
                                 (click)=selectproject() data-target="#projectmodal">Select</button>
@@ -40,9 +40,9 @@
                 <div class="form-group row">
                     <label for="parentTask" class="col-sm-2 col-form-label">Parent Task</label>
                     <div class="col-sm-10" style="display: inline-flex;">
-                            <input type="text" class="form-control" [disabled]="(task.IsParentTask)" style="display: inline-block;" 
+                            <input type="text" class="form-control" [disabled]=true style="display: inline-block;" 
                              id="parenttask" maxlength="50" required name="ParentId" #parenttask="ngModel" 
-                             [(ngModel)]="task.parenttaskName" placeholder="Select a parent task">
+                             [(ngModel)]="task.ParentTaskName" placeholder="Select a parent task">
                             <button type="button" id="btnparenttask" [disabled]="(task.IsParentTask)" class="btn btn-success ml-2" data-toggle="modal" 
                                     (click)=selectparenttask() data-target="#parenttaskmodal">Select</button>
                     </div>
@@ -70,7 +70,8 @@
                 <div class="form-group row">
                         <label for="taskName" class="col-sm-2 col-form-label">User</label>
                         <div class="col-sm-10" style="display: inline-flex;">
-                            <input type="text" class="form-control" [disabled]="(task.IsParentTask)" id="user" maxlength="50" required name="user" #userName="ngModel" [(ngModel)]="task.user" placeholder="Select a user">
+                            <input type="text" class="form-control" [disabled]=true id="user" 
+                            maxlength="50" required name="user" #userName="ngModel" [(ngModel)]="task.UserName" placeholder="Select a user">
                             <button type="button" class="btn btn-success ml-2" data-toggle="modal" 
                                 (click)=selectuser() [disabled]="(task.IsParentTask)" data-target="#usermodal">Select</button>
                         </div>
