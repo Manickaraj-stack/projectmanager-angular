@@ -14,6 +14,7 @@ import { HttpModule } from '@angular/http';
 import { CommonutilsModule } from './commonutils.module';
 import { UserModule } from './userlist/user.module';
 import { AddProjectModule } from './addproject/addproject.module';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 export class MyOptions extends RequestOptions {
   constructor() {
@@ -43,6 +44,7 @@ export class MyOptions extends RequestOptions {
     },
     appService
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   bootstrap: [AppComponent]
 })
 export class AppModule{ }
