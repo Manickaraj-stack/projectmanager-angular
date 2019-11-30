@@ -31,7 +31,7 @@ describe('AddprojectComponent', () => {
   it('should get projects', () => {
     var allprojects = component.allprojects[0];
     expect(component).toBeTruthy();
-    expect(allprojects.ProjectName).toEqual('new project')
+    expect(allprojects.ProjectName).toEqual('complete assignments');
   });
 
   it('should add a new project', () => {
